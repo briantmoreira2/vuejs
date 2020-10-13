@@ -12,6 +12,60 @@
       title="Usuarios"
       class="px-5 py-3"
     >
+      <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <v-text-field
+            v-model="searchUsername"
+            label="Buscar"
+            placeholder="Usuario"
+            outlined
+            @input="searchMethod(searchUsername, 'username')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <v-text-field
+            v-model="searchName"
+            label="Buscar"
+            placeholder="Nombre"
+            outlined
+            @input="searchMethod(searchName , 'name')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <v-text-field
+            v-model="searchLastname"
+            label="Buscar"
+            placeholder="Apellido"
+            outlined
+            @input="searchMethod(searchLastname, 'lastname')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <v-text-field
+            v-model="searchEmail"
+            label="Buscar"
+            placeholder="Email"
+            outlined
+            @input="searchMethod(searchEmail , 'email')"
+          />
+        </v-col>
+      </v-row>
       <v-simple-table>
         <thead>
           <tr>
@@ -43,12 +97,37 @@
             <td>{{ user.lastname }}</td>
             <td>{{ user.email }}</td>
             <td>
-              <v-btn :to="'pages/user/edit/' + user._id">
-                Editar Usuario
-              </v-btn>
-              <v-btn @click="delUser(user._id)">
-                Borrar Usuario
-              </v-btn>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="3"
+                >
+                  <v-btn
+                    style="width: 20px;"
+                    :to="'pages/user/edit/' + user._id"
+                  >
+                    Editar
+                  </v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="3"
+                  md="1"
+                />
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="3"
+                >
+                  <v-btn
+                    style="width: 20px;"
+                    @click="delUser(user._id)"
+                  >
+                    Borrar
+                  </v-btn>
+                </v-col>
+              </v-row>
             </td>
           </tr>
         </tbody>
@@ -65,6 +144,11 @@
     data () {
       return {
         users: [],
+        usersAll: [],
+        searchName: '',
+        searchUsername: '',
+        searchLastname: '',
+        searchEmail: '',
       }
     },
     mounted () {
@@ -75,6 +159,7 @@
         axios.get(this.$store.state.urlApi + '/users')
           .then(response => {
             this.users = response.data.doc
+            this.usersAll = this.users
             console.log(this.users)
           })
           .catch(error => {
@@ -90,6 +175,27 @@
           .catch(error => {
             console.log(error.response)
           })
+      },
+      searchMethod (search, valueFilter) {
+        console.log(search.toString())
+        console.log(valueFilter.toString())
+        switch (valueFilter.toString()) {
+          case 'name':
+            this.users = this.usersAll.filter(rec => rec.name.toString().toUpperCase().search(search.toString().toUpperCase()) !== -1)
+            break
+          case 'username':
+            this.users = this.usersAll.filter(rec => rec.username.toString().toUpperCase().search(search.toString().toUpperCase()) !== -1)
+            break
+          case 'lastname':
+            this.users = this.usersAll.filter(rec => rec.lastname.toString().toUpperCase().search(search.toString().toUpperCase()) !== -1)
+            break
+          case 'email':
+            this.users = this.usersAll.filter(rec => rec.email.toString().toUpperCase().search(search.toString().toUpperCase()) !== -1)
+            break
+        }
+        if (search === '') {
+          this.users = this.usersAll
+        }
       },
     },
   }
